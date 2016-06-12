@@ -9,6 +9,11 @@ exports.emotions = function(messageData) {
     }
 };
 
+exports.mergeMainUser = function(messageData, userNames) {
+    
+}
+
+
 
 exports.getUserNamesFromMessages = function(messageData) {
     var threadsWithTwoRecipiants = [];
