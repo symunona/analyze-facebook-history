@@ -1,0 +1,21 @@
+{
+    "name": "analize-facebook-history",
+    "version": "0.0.1",
+    "description": "Parses the messages for emotions, eliminates unnecessary messages, merges the main user.",
+    "main": "app.js",
+    "scripts": {
+        "test": "test.js"
+    },
+    "keywords": [
+        "facebook",
+        "history",
+        "analize",
+        "mood"
+    ],
+    "author": "Bendeguy",
+    "license": "ISC",
+    "dependencies": {
+        "progress": "^1.1.8",
+        "sql.js": "git+https://github.com/kripken/sql.js.git"
+    }
+}
