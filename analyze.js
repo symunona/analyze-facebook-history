@@ -1,20 +1,80 @@
 var consts = require('./consts');
 
-
+/** 
+ * Extends messageData with the emoticon counts
+ * of each emotion.  
+ */
 exports.emotions = function(messageData) {
 
     for (var i = 0; i < messageData.messages.length; i++) {
         var message = messageData.messages[i];
+        for (var emotion in consts.c.emotions) {
 
+            var emoticons = consts.c.emotions[emotion];
+            for (var emoticonIndex = 0; emoticonIndex < emoticons.length; emoticonIndex++) {
+                if (message.message.indexOf(emoticons[emoticonIndex]) > -1) {
+
+                    /* Only add key, if emotion found to reduce JSON size */
+                    if (!message[emotion]) message[emotion] = 0;
+                    message[emotion]++;
+                }
+            }
+        }
     }
 };
 
+/**
+ * Replaces the user ID's in messages using
+ * the names of the main user.
+ * If the user changed his/her name in time
+ * the parser created a different username for each name
+ * with a different ID. Here we merge the ones to the 
+ * first found userId, leaving the name.
+ */
 exports.mergeMainUser = function(messageData, userNames) {
-    
-}
+    var firstUserId = messageData.parsingMetaData.userMap[userNames[0]];
+    messageData.parsingMetaData.mainUserId = firstUserId;
 
+    var userIdsToMerge = [];
+    for (var userIndex = 1; userIndex < userNames.length; userIndex++) {
+        userIdsToMerge.push(messageData.parsingMetaData.userMap[userNames[userIndex]]);
+    }
+    for (var messageIndex = 0; messageIndex < messageData.messages.length; messageIndex++) {
+        var message = messageData.messages[messageIndex];
+        for (var i = 0; i < userIdsToMerge.length; i++) {
+            var userIdToReplace = userIdsToMerge[i];
+            if (message.fromUserId == userIdToReplace) {
+                message.fromUserId = firstUserId;
+            }
+            if (message.toUserId == userIdToReplace) {
+                message.toUserId = firstUserId;
+            }
+        }
+    }
+};
 
+/**
+ * Removes the messages not transferred between the main user
+ * and someone else, to reduce size.
+ */
+exports.removeGroupMessages = function(messageData) {
+    var mainUserId = messageData.parsingMetaData.mainUserId;
+    var filteredMessages = [];
+    for (var messageIndex = 0; messageIndex < messageData.messages.length; messageIndex++) {
+        var message = messageData.messages[messageIndex];
+        if (message.fromUserId == mainUserId ||
+            message.toUserId == mainUserId) {
+            filteredMessages.push(message);
 
+        }
+    }
+    messageData.messages = filteredMessages;
+};
+
+/** 
+ * 
+ * @returns {string} the usernames of the main user 
+ * */
 exports.getUserNamesFromMessages = function(messageData) {
     var threadsWithTwoRecipiants = [];
     var threadRecepiants = messageData.parsingMetaData.threadRecipiants;
