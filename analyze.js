@@ -1,4 +1,5 @@
 var consts = require('./consts');
+var moment = require('moment');
 
 /** 
  * Extends messageData with the emoticon counts
@@ -22,6 +23,21 @@ exports.emotions = function(messageData) {
         }
     }
 };
+
+/** 
+ * Extract year, month and day fields, to be more easily accessible
+ * at conversion.  
+ */
+exports.extractDates = function(messageData) {
+
+    for (var i = 0; i < messageData.messages.length; i++) {
+        var message = messageData.messages[i];
+        message.year = moment(message.sendDate, 'year');
+        message.month = moment(message.sendDate, 'month');
+        message.day = moment(message.sendDate, 'day');
+    }
+};
+
 
 /**
  * Replaces the user ID's in messages using
@@ -64,15 +80,16 @@ exports.removeGroupMessages = function(messageData) {
         var message = messageData.messages[messageIndex];
         if (message.fromUserId == mainUserId ||
             message.toUserId == mainUserId) {
+            message.isInbound = (message.toUserId == mainUserId);
+            message.userId = message.isInbound ? message.fromUserId : message.toUserId;
             filteredMessages.push(message);
-
         }
     }
     messageData.messages = filteredMessages;
 };
 
 /** 
- * 
+ * Gets the main username by guessing.
  * @returns {string} the usernames of the main user 
  * */
 exports.getUserNamesFromMessages = function(messageData) {

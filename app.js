@@ -26,7 +26,7 @@ analyze.removeGroupMessages(jsonRaw);
 console.log('Analyzing message emoticons');
 analyze.emotions(jsonRaw);
 
-console.log('Exporting to JSON/SQLITE');
+console.log('Exporting to JSON/SQLITE to: ', outputFileName);
 
 
 fs.writeFileSync(outputFileName, JSON.stringify(jsonRaw));
