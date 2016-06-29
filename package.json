@@ -1,5 +1,5 @@
 {
-    "name": "analize-facebook-history",
+    "name": "analyze-facebook-history",
     "version": "0.0.1",
     "description": "Parses the messages for emotions, eliminates unnecessary messages, merges the main user.",
     "main": "app.js",
@@ -12,10 +12,19 @@
         "analize",
         "mood"
     ],
-    "author": "Bendeguy",
+    "author": {
+        "name": "Bendeguy"
+    },
     "license": "ISC",
     "dependencies": {
         "progress": "^1.1.8",
         "sql.js": "git+https://github.com/kripken/sql.js.git"
-    }
+    },
+    "gitHead": "512b7d6bf32f8ceab3f362a1b73b2ab50fa6b745",
+    "readme": "# Facebook History Message Analizer\r\n\r\nInputs the messages.raw.json file exported by the \r\nfacebook-html-message-parser and \r\nparses the messages adding mood counters to emotions to the output file.\r\n\r\n\r\n",
+    "readmeFilename": "readme.md",
+    "_id": "analize-facebook-history@0.0.1",
+    "_shasum": "ccb50a74881541c7f3076a6a71a09ebedfe0e86f",
+    "_from": "git+https://github.com/symunona/analyze-facebook-history.git",
+    "_resolved": "git+https://github.com/symunona/analyze-facebook-history.git#512b7d6bf32f8ceab3f362a1b73b2ab50fa6b745"
 }

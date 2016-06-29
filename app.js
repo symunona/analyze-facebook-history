@@ -13,23 +13,12 @@ var inputFileName = process.argv[2];
 var outputFileName = getUserNameFromRawFileName(inputFileName) + 'filtered.json';
 var jsonRaw = JSON.parse(fs.readFileSync(inputFileName, 'utf8'));
 
-var userNames = analyze.getUserNamesFromMessages(jsonRaw);
-console.log('Found user names: ');
-console.log(userNames);
+jsonRaw = analyze.analyze(jsonRaw);
 
-console.log('Merging usernames in messages');
-analyze.mergeMainUser(jsonRaw, userNames);
-
-console.log('Eliminating not interesting group messages. (the ones not addressed and not sent by the analyzed user)');
-analyze.removeGroupMessages(jsonRaw);
-
-console.log('Analyzing message emoticons');
-analyze.emotions(jsonRaw);
-
-console.log('Exporting to JSON/SQLITE to: ', outputFileName);
-
+console.log('Exporting to JSON ', outputFileName);
 
 fs.writeFileSync(outputFileName, JSON.stringify(jsonRaw));
+
 
 
 /** 

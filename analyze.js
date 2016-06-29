@@ -1,5 +1,40 @@
-var consts = require('./consts');
-var moment = require('moment');
+var emotions = require('./emotions.json');
+
+
+for (var emotion in emotions) {
+    switch (emotion) {
+        case 'happy':
+        case 'sad':
+            emotions[emotion] = emotions[emotion].split('  ');
+            break;
+        default:
+            emotions[emotion] = emotions[emotion].split(' ');
+    }
+}
+
+/**
+ * Analyzes the input data, finding and merging 
+ * main usernames, removing group messages,
+ * and adding message mood data.
+ * 
+ */
+exports.analyze = function(jsonRaw) {
+    var userNames = exports.getUserNamesFromMessages(jsonRaw);
+    // console.log('Found user names: ');
+    // console.log(userNames);
+
+    // console.log('Merging usernames in messages');
+    exports.mergeMainUser(jsonRaw, userNames);
+
+    // console.log('Eliminating not interesting group messages. (the ones not addressed and not sent by the analyzed user)');
+    exports.removeGroupMessages(jsonRaw);
+
+    // console.log('Analyzing message emoticons');
+    exports.emotions(jsonRaw);
+    return jsonRaw;
+};
+
+
 
 /** 
  * Extends messageData with the emoticon counts
@@ -9,9 +44,9 @@ exports.emotions = function(messageData) {
 
     for (var i = 0; i < messageData.messages.length; i++) {
         var message = messageData.messages[i];
-        for (var emotion in consts.c.emotions) {
+        for (var emotion in emotions) {
 
-            var emoticons = consts.c.emotions[emotion];
+            var emoticons = emotions[emotion];
             for (var emoticonIndex = 0; emoticonIndex < emoticons.length; emoticonIndex++) {
                 if (message.message.indexOf(emoticons[emoticonIndex]) > -1) {
 
@@ -28,15 +63,15 @@ exports.emotions = function(messageData) {
  * Extract year, month and day fields, to be more easily accessible
  * at conversion.  
  */
-exports.extractDates = function(messageData) {
+// exports.extractDates = function(messageData) {
 
-    for (var i = 0; i < messageData.messages.length; i++) {
-        var message = messageData.messages[i];
-        message.year = moment(message.sendDate, 'year');
-        message.month = moment(message.sendDate, 'month');
-        message.day = moment(message.sendDate, 'day');
-    }
-};
+//     for (var i = 0; i < messageData.messages.length; i++) {
+//         var message = messageData.messages[i];
+//         message.year = moment(message.sendDate, 'year');
+//         message.month = moment(message.sendDate, 'month');
+//         message.day = moment(message.sendDate, 'day');
+//     }
+// };
 
 
 /**
@@ -48,6 +83,7 @@ exports.extractDates = function(messageData) {
  * first found userId, leaving the name.
  */
 exports.mergeMainUser = function(messageData, userNames) {
+    console.log('merge main user')
     var firstUserId = messageData.parsingMetaData.userMap[userNames[0]];
     messageData.parsingMetaData.mainUserId = firstUserId;
 
